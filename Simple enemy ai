@@ -1,0 +1,80 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Ai2 : MonoBehaviour
+{
+    public GameObject ai;
+
+public GameObject fp;
+public GameObject bullet;
+public GameObject pos;
+private GameObject target;
+private float fr;
+private float fr2;
+public bool a;
+    void Start()
+    {
+StartCoroutine(Поиск_пути());
+    }
+
+
+
+
+void OnTriggerEnter(Collider other){
+if (other.gameObject.tag =="Player"){
+
+target = other.gameObject;
+a=true;
+}
+
+
+}
+   
+
+IEnumerator Поиск_пути(){
+if(ai!=null){
+yield return new WaitForSeconds(2f);
+pos.transform.position = new Vector3(ai.transform.position.x+Random.Range(-10f,10f),ai.transform.position.y,ai.transform.position.z+Random.Range(-10,10));
+yield return new WaitForSeconds(2f);
+}
+
+StartCoroutine(Поиск_пути());
+
+}
+void OnTriggerExit(Collider other){
+if (other.gameObject.tag =="Player"){
+target = null;
+a=false;
+}
+
+
+}
+    void Update()
+    {
+
+
+if (a==false){
+
+
+transform.position = Vector3.MoveTowards(this.transform.position,pos.transform.position,4f*Time.deltaTime);
+
+}
+        if (a==true){
+
+transform.LookAt(target.transform.position);
+
+if (Time.time>=fr){
+fr=Time.time+2;
+GameObject go = Instantiate(bullet, fp.transform.position, fp.transform.rotation);
+
+    go.GetComponent<Rigidbody>().velocity =fp.transform.forward*10;
+go.GetComponent<Rigidbody>().AddForce(transform.up*300f);
+Destroy(go,2f);
+}
+
+}
+
+
+    }
+}
